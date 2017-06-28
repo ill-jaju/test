@@ -12,7 +12,7 @@ $('#addShow').on("click", function() { //event handler for submit button
             var results = response.results;
             for (var i = 0; i < results.length; i++) {
                 var movieBox = $('<div>');
-                movieBox.addClass('col-xs-12');
+                movieBox.addClass('col-xs-12 col-md-6');
 
                 var posterBox = $('<div>');
                 posterBox.addClass('col-xs-12 col-md-3');
@@ -22,13 +22,18 @@ $('#addShow').on("click", function() { //event handler for submit button
                 posterBox.append(img);
 
                 var infoBox = $('<div>');
-                infoBox.addClass('col-xs-12 col-md-9');                
+                infoBox.addClass('col-xs-12 col-md-6 infoBox');                
 
                 var plot = $('<h5>').html(results[i].overview);
                 infoBox.append(plot);
 
-                movieBox.append(posterBox);
-                movieBox.append(infoBox);
+                var reviewBox = $('<div>');
+                reviewBox.addClass('col-xs-12 col-md-3');
+
+                var reviews =  $('<h5>').html("The Movie DB - " + results[i].vote_average);
+                reviewBox.append(reviews);
+
+                movieBox.append(posterBox, infoBox, reviewBox);
 
                 $('#gifsHere').append(movieBox);
            }
