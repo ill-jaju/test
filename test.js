@@ -1,6 +1,6 @@
 $('#addShow').on("click", function() { //event handler for submit button
         event.preventDefault(); //prevents refreshing
-        var show = $('#gifSearch').val().trim(); //takes user input from from
+        var show = $('#titleSearch').val().trim(); //takes user input from from
         var queryURL = "https://api.themoviedb.org/3/search/movie?api_key=50c9867e013d532a54d305162ee29e35&query=" + show;
 
         $.ajax({ //AJAX call for specific show being clicked
@@ -8,6 +8,8 @@ $('#addShow').on("click", function() { //event handler for submit button
             method: "GET"
         }).done(function(response) {
             console.log(response.results);
+
+            $('#moviesHere').empty();
 
             var results = response.results;
             for (var i = 0; i < results.length; i++) {
@@ -24,8 +26,8 @@ $('#addShow').on("click", function() { //event handler for submit button
                 var infoBox = $('<div>');
                 infoBox.addClass('col-xs-12 col-md-6 infoBox');                
 
-                var plot = $('<h5>').html(results[i].overview);
-                infoBox.append(plot);
+                var information = $('<h5>').html("<tr> <td>" + results[i].title + " </td></tr> " + "<tr><td>" + results[i].overview + " </td></tr> ");
+                infoBox.append(information);
 
                 var reviewBox = $('<div>');
                 reviewBox.addClass('col-xs-12 col-md-3');
@@ -35,7 +37,7 @@ $('#addShow').on("click", function() { //event handler for submit button
 
                 movieBox.append(posterBox, infoBox, reviewBox);
 
-                $('#gifsHere').append(movieBox);
+                $('#moviesHere').append(movieBox);
            }
         });
 
