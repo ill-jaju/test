@@ -32,7 +32,7 @@ $(document).ready(function() {
 
                 var img = $('<img>');
                 img.addClass('img-responsive');
-                img.attr("src", "http://image.tmdb.org/t/p/w185//" + results[i].poster_path);
+                img.attr("src", "https://image.tmdb.org/t/p/w185//" + results[i].poster_path);
                 posterBox.append(img);
 
                 var infoBox = $('<div>'); //creates div for information
@@ -42,7 +42,7 @@ $(document).ready(function() {
                 infoBox.append(information);
 
                 var imdbRatings, rottenRatings, metaRatings;
-                var queryURL = "http://www.omdbapi.com/?t=" + str + "&y=" + year + "&apikey=40e9cece"; //movie + year query
+                var queryURL = "https://www.omdbapi.com/?t=" + str + "&y=" + year + "&apikey=40e9cece"; //movie + year query
                 
                 $.ajax({ //ajax call to omdb for reviews 
                     url: queryURL,
