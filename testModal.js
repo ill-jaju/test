@@ -1,72 +1,92 @@
- $(document).ready(function() {
+$(document).ready(function() {
 
-     var imdbRatings, rottenRatings, metaRatings;
+    var imdbRatings, rottenRatings, metaRatings;
 
-     $('body').on("click", "img", function() {
-         var dataId = $(this).attr("data-id");
-         var queryURL = "https://api.themoviedb.org/3/movie/" + dataId + "?api_key=50c9867e013d532a54d305162ee29e35";
+    $('body').on("click", "img", function() {
+        var dataId = $(this).attr("data-id");
+        var queryURL = "https://api.themoviedb.org/3/movie/" + dataId + "?api_key=50c9867e013d532a54d305162ee29e35&append_to_response=videos";
 
-         $.ajax({ //AJAX call for specific show being clicked
-             url: queryURL,
-             method: "GET"
-         }).done(function(response) {
+        $.ajax({ //AJAX call for specific show being clicked
+            url: queryURL,
+            method: "GET"
+        }).done(function(response) {
 
-             $("#modalMovieDiv").empty();
+            if (response.videos.results['0'] === undefined) {
 
-             var tagline = $('<h5>').html('"' + response.tagline + '"');
+                $("#modalMovieDiv").empty();
 
-             $("#modalMovieDiv").append(tagline);
+                var tagline = $('<h5>').html('"' + response.tagline + '"');
 
-             $("#myModal").modal("show");
+                $("#modalMovieDiv").append(tagline);
 
+                $("#myModal").modal("show");
 
-         });
+            } 
 
-         var dataRatings = $(this).attr("data-ratings");
-         var queryURLrating = "https://www.omdbapi.com/?t=" + dataRatings + "&apikey=40e9cece";
+            else {
+                console.log(response.videos.results['0'].key);
 
-         console.log(queryURLrating);
+                $("#modalMovieDiv").empty();
 
-         $.ajax({ //AJAX call for specific show being clicked
-             url: queryURLrating,
-             method: "GET"
-         }).done(function(response) {
+                var ytKey = response.videos.results['0'].key;
+                var tagline = $('<h5>').html('"' + response.tagline + '"');
+                
+                var youtube = $('<iframe>');
+                youtube.addClass('height="350" embed-responsive-item allowfullscreen wmode="Opaque"');
+                youtube.attr("src", "https://www.youtube.com/embed/"+ ytKey +"?autoplay=1&loop=1&rel=0&wmode=transparent");
 
-             $("#modalBodyDiv").empty();
-             $("#modalBodyRatings").empty();
+                $("#modalMovieDiv").append(youtube, tagline);
 
-             $("#modalTitleH4").html(response.Title + ' (' + response.Released + ')' );
+                $("#myModal").modal("show");
+            }
 
-             var information = $('<h5>').html(response.Genre + '<br>' +
-                 response.Plot + '<hr>' +
-                 'Director: ' + response.Director + '<br>' +
-                 'Cast: ' + response.Actors);
+        });
 
-             $("#modalBodyDiv").append(information);
+        var dataRatings = $(this).attr("data-ratings");
+        var queryURLrating = "https://www.omdbapi.com/?t=" + dataRatings + "&apikey=40e9cece";
 
-             imdbHundred = response.Ratings[0].Value;
-             imdbNums = imdbHundred.split('/');
-             imdbRatings = parseFloat(imdbNums[0]);
+        console.log(queryURLrating);
 
-             rottenRatings = (parseFloat(response.Ratings[1].Value) / 10);
+        $.ajax({ //AJAX call for specific show being clicked
+            url: queryURLrating,
+            method: "GET"
+        }).done(function(response) {
 
-             metaHundred = (response.Ratings[2].Value);
-             metaNums = metaHundred.split('/');
-             metaRatings = parseFloat(metaNums[0] / 10);
-             //rating results
-             console.log(imdbRatings);
-             console.log(rottenRatings);
-             console.log(metaRatings);
+            $("#modalBodyDiv").empty();
+            $("#modalBodyRatings").empty();
 
-             var reelRatingAdd = (imdbRatings + rottenRatings + metaRatings);
-             var reelRating = (reelRatingAdd / 3);
-             console.log("Reel Rating is " + Math.round(reelRating * 10) / 10);
+            $("#modalTitleH4").html(response.Title + ' (' + response.Released + ')');
 
-             var ratings = $('<h5>').html("IMDb = " + imdbRatings + " Rotten Tomatoes = " + rottenRatings + " Metacritic = " + rottenRatings + "<br><br>" + "Reel Rating = " + Math.round(reelRating * 10) / 10);
+            var information = $('<h5>').html(response.Genre + '<br>' +
+                response.Plot + '<hr>' +
+                'Director: ' + response.Director + '<br>' +
+                'Cast: ' + response.Actors);
 
-             $("#modalBodyRatings").append(ratings);
+            $("#modalBodyDiv").append(information);
 
-         });
-     });
+            imdbHundred = response.Ratings[0].Value;
+            imdbNums = imdbHundred.split('/');
+            imdbRatings = parseFloat(imdbNums[0]);
 
- });
+            rottenRatings = (parseFloat(response.Ratings[1].Value) / 10);
+
+            metaHundred = (response.Ratings[2].Value);
+            metaNums = metaHundred.split('/');
+            metaRatings = parseFloat(metaNums[0] / 10);
+            //rating results
+            console.log(imdbRatings);
+            console.log(rottenRatings);
+            console.log(metaRatings);
+
+            var reelRatingAdd = (imdbRatings + rottenRatings + metaRatings);
+            var reelRating = (reelRatingAdd / 3);
+            console.log("Reel Rating is " + Math.round(reelRating * 10) / 10);
+
+            var ratings = $('<h5>').html("IMDb = " + imdbRatings + " Rotten Tomatoes = " + rottenRatings + " Metacritic = " + metaRatings + "<br><br>" + "Reel Rating = " + Math.round(reelRating * 10) / 10);
+
+            $("#modalBodyRatings").append(ratings);
+
+        });
+    });
+
+});
