@@ -2,40 +2,54 @@ $(document).ready(function() {
 
     var imdbRatings, rottenRatings, metaRatings;
 
-    $('body').on("click", "img", function() {
+    $('body').on("click", "img", function() { //dom for image click
         var dataId = $(this).attr("data-id");
         var queryURL = "https://api.themoviedb.org/3/movie/" + dataId + "?api_key=50c9867e013d532a54d305162ee29e35&append_to_response=videos";
 
-        $.ajax({ //AJAX call for specific show being clicked
+        $.ajax({ 
             url: queryURL,
             method: "GET"
         }).done(function(response) {
 
-            if (response.videos.results['0'] === undefined) {
+            if (response.videos.results['0'] === undefined) { //if video is undefined
 
-                $("#modalMovieDiv").empty();
+                $("#modalMovieDiv").empty(); //clears div of any content
 
-                var tagline = $('<h5>').html('"' + response.tagline + '"');
-
-                $("#modalMovieDiv").append(tagline);
+                $("#modalTitleH4").html(response.title + ' (' + response.release_date + ')' +
+                    '<br><h5>' + '"' + response.tagline + '"</h5>');
 
                 $("#myModal").modal("show");
 
-            } 
+            }
+            // code to see if tagline = "", dont display it
+            // else if (response.videos.results['0'] === undefined && response.tagline != '""') {
+
+            //     $("#modalMovieDiv").empty();
+
+            //     $("#modalTitleH4").html(response.title + ' (' + response.release_date + ')' +
+            //         '<br><h5>' + '"' + response.tagline + '"</h5>');
+
+            //     $("#myModal").modal("show");
+            // }
 
             else {
-                console.log(response.videos.results['0'].key);
+                console.log(response.videos.results['0'].key); //if video  exists
 
                 $("#modalMovieDiv").empty();
 
-                var ytKey = response.videos.results['0'].key;
-                var tagline = $('<h5>').html('"' + response.tagline + '"');
-                
-                var youtube = $('<iframe>');
-                youtube.addClass('height="350" embed-responsive-item allowfullscreen wmode="Opaque"');
-                youtube.attr("src", "https://www.youtube.com/embed/"+ ytKey +"?autoplay=1&loop=1&rel=0&wmode=transparent");
+                $("#modalTitleH4").html(response.title + ' (' + response.release_date + ')' +
+                    '<br><h5>' + '"' + response.tagline + '"</h5>');
 
-                $("#modalMovieDiv").append(youtube, tagline);
+                var ytKey = response.videos.results['0'].key;
+
+                var youtube = $('<iframe>'); //creates iframe for movie
+                youtube.addClass('allowfullscreen frameborder="0"');
+                youtube.attr("src", "https://www.youtube.com/embed/" + ytKey);
+                var movieDiv = $('<div>');
+                movieDiv.addClass('embed-responsive embed-responsive-16by9');
+                movieDiv.append(youtube);
+
+                $('#modalMovieDiv').append(movieDiv); //appens video to div
 
                 $("#myModal").modal("show");
             }
@@ -47,16 +61,14 @@ $(document).ready(function() {
 
         console.log(queryURLrating);
 
-        $.ajax({ //AJAX call for specific show being clicked
+        $.ajax({ //ajax call to grab rating / information
             url: queryURLrating,
             method: "GET"
         }).done(function(response) {
-
+            //clears existing divs
             $("#modalBodyDiv").empty();
             $("#modalBodyRatings").empty();
-
-            $("#modalTitleH4").html(response.Title + ' (' + response.Released + ')');
-
+            //creates information about movie
             var information = $('<h5>').html(response.Genre + '<br>' +
                 response.Plot + '<hr>' +
                 'Director: ' + response.Director + '<br>' +
